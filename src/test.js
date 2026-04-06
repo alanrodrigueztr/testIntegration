@@ -1,0 +1,53 @@
+// app.js — hosted on YOUR cdn, loaded via <script src="...">
+
+let incode;
+let session;
+const container = document.getElementById('incode-container');
+
+async function init() {
+  // 1. Get session token from YOUR backend (keeps API key off the browser)
+  const res = await fetch('https://your-backend.com/create-session');
+  session = await res.json(); // { token: "..." }
+
+  // 2. Initialize the Incode SDK (loaded globally by the CDN script tag)
+  incode = await window.OnBoarding.create({
+    apiURL: 'https://demo-api.incodesmile.com/0',
+    // NO apiKey here — that stays on your backend
+  });
+
+  await sendGeo();
+}
+
+async function sendGeo() {
+  // 3. Geolocation — SDK calls browser GPS + sends to Omni API directly
+  await incode.sendGeolocation({ token: session.token }).catch(console.error);
+  renderID();
+}
+
+function renderID() {
+  // 4. ID capture — SDK opens camera UI inside the container div
+  incode.renderCaptureId(container, {
+    token: session,
+    onSuccess: renderFace,
+    onError: console.error,
+  });
+}
+
+function renderFace() {
+  // 5. Face capture — selfie + liveness, same pattern
+  incode.renderCaptureFace(container, {
+    token: session,
+    onSuccess: doFaceMatch,
+    onError: console.error,
+  });
+}
+
+async function doFaceMatch() {
+  // 6. processFace triggers face match (selfie vs ID photo) on Omni API
+  await incode.processFace({ token: session.token });
+  await incode.finishOnboarding({ token: session.token });
+  // 7. Tell YOUR backend the session is done — retrieve scores server-side
+  await fetch(`https://your-backend.com/complete?token=${session.token}`);
+}
+
+document.addEventListener('DOMContentLoaded', init);
