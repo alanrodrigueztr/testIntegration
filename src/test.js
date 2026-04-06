@@ -40,7 +40,7 @@ async function sendGeo() {
 function renderID() {
   // 4. ID capture — SDK opens camera UI inside the container div
   incode.renderCaptureId(container, {
-    token: session,
+    token: session.token,
     onSuccess: renderFace,
     onError: console.error,
   });
@@ -49,7 +49,7 @@ function renderID() {
 function renderFace() {
   // 5. Face capture — selfie + liveness, same pattern
   incode.renderCaptureFace(container, {
-    token: session,
+    token: session.token,
     onSuccess: doFaceMatch,
     onError: console.error,
   });
