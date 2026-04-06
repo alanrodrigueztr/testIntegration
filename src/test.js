@@ -2,16 +2,29 @@
 
 let incode;
 let session;
-const container = document.getElementById('incode-container');
+const container = document.getElementById("incode-container");
+
+function notifyCompletion(data) {
+  const event = new CustomEvent("incodeCompleted", {
+    detail: data,
+  });
+
+  window.dispatchEvent(event);
+}
 
 async function init() {
   // 1. Get session token from YOUR backend (keeps API key off the browser)
-  const res = await fetch('https://your-backend.com/create-session');
+  const res = await fetch(
+    "https://testint-744443929525.northamerica-south1.run.app/create-session",
+    {
+      method: "POST",
+    }
+  );
   session = await res.json(); // { token: "..." }
 
   // 2. Initialize the Incode SDK (loaded globally by the CDN script tag)
   incode = await window.OnBoarding.create({
-    apiURL: 'https://demo-api.incodesmile.com/0',
+    apiURL: "https://demo-api.incodesmile.com/0",
     // NO apiKey here — that stays on your backend
   });
 
@@ -47,7 +60,10 @@ async function doFaceMatch() {
   await incode.processFace({ token: session.token });
   await incode.finishOnboarding({ token: session.token });
   // 7. Tell YOUR backend the session is done — retrieve scores server-side
-  await fetch(`https://your-backend.com/complete?token=${session.token}`);
+  notifyCompletion({
+    token: session.token,
+    status: "completed",
+  });
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener("DOMContentLoaded", init);
