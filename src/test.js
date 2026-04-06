@@ -2,7 +2,7 @@
 
 let incode;
 let session;
-const container = document.getElementById("incode-container");
+let container = document.getElementById("incode-container");
 
 function notifyCompletion(data) {
   const event = new CustomEvent("incodeCompleted", {
