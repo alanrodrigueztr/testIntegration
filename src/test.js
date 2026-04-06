@@ -66,4 +66,14 @@ async function doFaceMatch() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener('DOMContentLoaded', () => {
+  container = document.getElementById('incode-container');
+  init();
+});
+
+// const allowedOrigin = 'https://coreqa.kosmos.la/';
+//     const origin = req.get('origin');
+
+//     if (origin !== allowedOrigin) {
+//       return res.status(403).json({ error: 'Forbidden' });
+//     }
