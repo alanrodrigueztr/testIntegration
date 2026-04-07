@@ -33,6 +33,7 @@ async function init() {
 
 async function sendGeo() {
   // 3. Geolocation — SDK calls browser GPS + sends to Omni API directly
+  await incode.sendFingerprint({ token: session.token }).catch(console.error);
   await incode.sendGeolocation({ token: session.token }).catch(console.error);
   renderID();
 }
