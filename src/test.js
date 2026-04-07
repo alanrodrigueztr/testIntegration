@@ -41,25 +41,12 @@ function renderID() {
   // 4. ID capture — SDK opens camera UI inside the container div
   incode.renderCaptureId(container, {
     session: session,
-    onSuccess: runIdValidation,
+    onSuccess: renderFace,
     onError: console.error,
   });
 }
 
-async function runIdValidation() {
-  try {
-    const result = await incode.processId({ token: incodeSession.token });
 
-    // result.status: "OK" | "WARN" | "ERROR"
-    // result.idValidation.photoSecurityAndQuality[].value / .status / .key
-    // result.ocrData — available via separate incode.ocrData() call if needed
-    // console.log('ID validation result:', result);
-
-    renderFace();
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 function renderFace() {
   // 5. Face capture — selfie + liveness, same pattern
@@ -73,6 +60,7 @@ function renderFace() {
 async function doFaceMatch() {
   // 6. processFace triggers face match (selfie vs ID photo) on Omni API
   await incode.processFace({ token: session.token });
+  await incode.processId({ token: session.token });
   await incode.finishOnboarding({ token: session.token });
   // 7. Tell YOUR backend the session is done — retrieve scores server-side
   notifyCompletion({
