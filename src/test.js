@@ -66,10 +66,17 @@ async function doFaceMatch() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
   container = document.getElementById('incode-container');
   init();
 });
+} else {
+  
+  init();
+}
+
+
 
 // const allowedOrigin = 'https://coreqa.kosmos.la/';
 //     const origin = req.get('origin');
