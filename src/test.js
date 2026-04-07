@@ -41,9 +41,24 @@ function renderID() {
   // 4. ID capture — SDK opens camera UI inside the container div
   incode.renderCaptureId(container, {
     session: session,
-    onSuccess: renderFace,
+    onSuccess: runIdValidation,
     onError: console.error,
   });
+}
+
+async function runIdValidation() {
+  try {
+    const result = await incode.processId({ token: incodeSession.token });
+
+    // result.status: "OK" | "WARN" | "ERROR"
+    // result.idValidation.photoSecurityAndQuality[].value / .status / .key
+    // result.ocrData — available via separate incode.ocrData() call if needed
+    // console.log('ID validation result:', result);
+
+    renderFace();
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function renderFace() {
