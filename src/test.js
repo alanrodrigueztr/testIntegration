@@ -62,7 +62,6 @@ async function doFaceMatch() {
   // 6. processFace triggers face match (selfie vs ID photo) on Omni API
   await incode.processFace({ token: session.token });
   await incode.processId({ token: session.token });
-  await incode.finishOnboarding({ token: session.token });
   // 7. Tell YOUR backend the session is done — retrieve scores server-side
   notifyCompletion({
     token: session.token,
