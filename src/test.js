@@ -14,14 +14,16 @@ function notifyCompletion(data) {
 
 async function init() {
   // 1. Get session token from YOUR backend (keeps API key off the browser)
-  const res = await fetch(
-    "https://testint-744443929525.northamerica-south1.run.app/create-session",
-    {
-      method: "POST",
-    }
-  );
-  session = await res.json(); // { token: "..." }
-
+  //   const res = await fetch(
+  //     "https://testint-744443929525.northamerica-south1.run.app/create-session",
+  //     {
+  //       method: "POST",
+  //     }
+  //   );
+  //   session = await res.json();
+  // { token: "..." }
+  session = { token: document.getElementById("incode-config").value };
+  console.log(session);
   // 2. Initialize the Incode SDK (loaded globally by the CDN script tag)
   incode = await window.OnBoarding.create({
     apiURL: "https://demo-api.incodesmile.com/0",
@@ -47,8 +49,6 @@ function renderID() {
   });
 }
 
-
-
 function renderFace() {
   // 5. Face capture — selfie + liveness, same pattern
   incode.renderCaptureFace(container, {
@@ -69,17 +69,21 @@ async function doFaceMatch() {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-  container = document.getElementById('incode-container');
-  init();
-});
-} else {
-  
-  init();
+function waitForContainer() {
+  const el = document.getElementById("incode-container");
+
+  if (el) {
+    init();
+  } else {
+    setTimeout(waitForContainer, 100);
+  }
 }
 
-
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", waitForContainer);
+} else {
+  waitForContainer();
+}
 
 // const allowedOrigin = 'https://coreqa.kosmos.la/';
 //     const origin = req.get('origin');
