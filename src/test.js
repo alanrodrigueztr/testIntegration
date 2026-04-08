@@ -12,6 +12,20 @@ function notifyCompletion(data) {
   window.dispatchEvent(event);
 }
 
+function waitForIncode(retries = 50) {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (window.OnBoarding) {
+        clearInterval(interval);
+        resolve(window.OnBoarding);
+      } else if (retries-- <= 0) {
+        clearInterval(interval);
+        reject(new Error('Incode SDK not loaded'));
+      }
+    }, 100);
+  });
+}
+
 async function init() {
   // 1. Get session token from YOUR backend (keeps API key off the browser)
   //   const res = await fetch(
@@ -24,8 +38,12 @@ async function init() {
   // { token: "..." }
   session = { token: document.getElementById("incode-config").value };
   console.log(session);
+
+  const OnBoarding = await waitForIncode();
+
+
   // 2. Initialize the Incode SDK (loaded globally by the CDN script tag)
-  incode = await window.OnBoarding.create({
+  incode = await OnBoarding.create({
     apiURL: "https://demo-api.incodesmile.com/0",
     // NO apiKey here — that stays on your backend
   });
